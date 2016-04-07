@@ -12,7 +12,7 @@ from canpy.split import split
 from canpy.highest_disorder import highest_disorder
 from canpy.mixing import mixing,plot_mixing
 from canpy.useful import *
-from canpy.useful_bis import complete_analysis, graph_defects
+from canpy.useful_bis import *
 from canpy.mapping import mapping
 from canpy.point_defects import point_defects
 from canpy.former_dumplog import former_dumplog

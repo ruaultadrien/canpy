@@ -354,6 +354,14 @@ class point_defects:
         through the periodic boundaries.
         '''    
         
+        inter = self['inter'][:]
+        vac = self['vac'][:]
+        
+        xi,yi,zi = np.transpose(inter)
+        
+        xv,yv,zv = np.transpose(vac)
+        
+        '''
         xi = self.defects['inter'][:,0]
         yi = self.defects['inter'][:,1]
         zi = self.defects['inter'][:,2]
@@ -361,7 +369,7 @@ class point_defects:
         xv = self.defects['vac'][:,0]
         yv = self.defects['vac'][:,1]
         zv = self.defects['vac'][:,2]
-        
+        '''
 
         fig = plt.figure()
         #ax = fig.add_subplot(111, projection='3d')
@@ -406,15 +414,10 @@ class point_defects:
         
         
         # Plotting of the translated vacancies and interstitials
-        xi = inter[:,0]
-        yi = inter[:,1]
-        zi = inter[:,2]
+        xi,yi,zi = np.transpose(inter)
         
+        xv,yv,zv = np.transpose(vac)
         
-        xv = vac[:,0]
-        yv = vac[:,1]
-        zv = vac[:,2]
-
 
         fig = plt.figure()
         ax = fig.gca(projection='3d')

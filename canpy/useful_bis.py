@@ -116,6 +116,7 @@ def graph_defects(dl, t_start=0, t_end='standard'):
     # Definition of the arrays used to plot the graph
     defects_array = []
     time_array = []
+    max_FP = 0
     
     current_time = t_start
     while abs(current_time - t_end) > 1e-6:
@@ -123,23 +124,218 @@ def graph_defects(dl, t_start=0, t_end='standard'):
         defects_array += [alpha.defects['FP_count']]
         print(alpha.defects['FP_count'])
         
+        if alpha.defects['FP_count'] > max_FP:
+            max_FP = alpha.defects['FP_count']
+        
         time_array += [current_time]
         
         current_time += interval
     
     
     #Ploting of defects as a function of time
-    fig=plt.figure()
-    plt.subplot(111)
-    plt.plot(time_array,defects_array)
-    plt.xlabel('Time [ps]')
-    plt.ylabel('Number of Frenkel pairs')
-    plt.title('Number of Frenkel pair from '+str(t_start)+' ps to '+str(t_end)+' ps')
-    plt.savefig('plot_FPcount_'+str(t_start)+'ps_to_'+str(t_end)+'ps.png')
+    fig = plt.figure()
+    ax = fig.add_subplot(1,1,1)
+    ax.plot(time_array,defects_array)
+    ax.set_xlim(0,t_end*1.01)
+    ax.set_ylim(0,1.1*max_FP)
+    ax.set_xlabel('Time [ps]')
+    ax.set_ylabel('Number of Frenkel pairs')
+    ax.set_title('Number of Frenkel pairs from '+str(t_start)+' ps to '+str(t_end)+' ps')
+    fig.savefig('plot_FPcount_'+str(t_start)+'ps_to_'+str(t_end)+'ps.png')
     
     plt.close(fig)
 
     
+    
+    
+    
+    
+    
+    
+def graph_semilog_defects(dl, t_start=0, t_end='standard'):
+    '''
+    This function allows to plot a graph of the defects as a function of time.
+    The user has to provide a dumplog object. He can also select the departure
+    time as well as the ending time in ps through the variables t_start and
+    t_end. If the user doesn't change the value of t_start and t_end they will
+    automatically be set such that the graph is made on the whole range of time
+    of the simulation.
+    '''
+    
+    if t_end == 'standard':
+        t_end = dl.time_real
+    
+    interval = dl.inter * dl.time_step
+    
+    # Definition of the arrays used to plot the graph
+    defects_array = []
+    time_array = []
+    max_FP = 0
+    
+    current_time = t_start
+    while abs(current_time - t_end) > 1e-6:
+        alpha = point_defects(dl,current_time)
+        defects_array += [alpha.defects['FP_count']]
+        print(alpha.defects['FP_count'])
+        
+        if alpha.defects['FP_count'] > max_FP:
+            max_FP = alpha.defects['FP_count']
+        
+        time_array += [current_time]
+        
+        current_time += interval
+    
+    
+    
+    # Definition of the maximum value for the y-axis of the graph
+    test = 1
+    while max_FP/test > 1:
+        test *= 10
+    sup_y = test
+
+    
+    #Ploting of defects as a function of time
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.plot(time_array,defects_array)
+    ax.set_yscale('log')
+    ax.set_xlabel('Time [ps]')
+    ax.set_ylabel('Number of Frenkel pairs')
+    ax.set_title('Number of Frenkel pairs from '+str(t_start)+' ps to '+str(t_end)+' ps')
+    ax.set_xlim(0,t_end*1.01)
+    ax.set_ylim(1,sup_y)
+    
+    fig.savefig('plot_FPcount_'+str(t_start)+'ps_to_'+str(t_end)+'ps.png')
+    
+    plt.close(fig)
+
+    
+    
+    
+
+
+
+
+
+
+
+
+def graph_log_defects(dl, t_start=0, t_end='standard'):
+    '''
+    This function allows to plot a graph of the defects as a function of time.
+    The user has to provide a dumplog object. He can also select the departure
+    time as well as the ending time in ps through the variables t_start and
+    t_end. If the user doesn't change the value of t_start and t_end they will
+    automatically be set such that the graph is made on the whole range of time
+    of the simulation.
+    '''
+    
+    if t_end == 'standard':
+        t_end = dl.time_real
+    
+    interval = dl.inter * dl.time_step
+    
+    # Definition of the arrays used to plot the graph
+    defects_array = []
+    time_array = []
+    max_FP = 0
+    
+    current_time = t_start
+    while abs(current_time - t_end) > 1e-6:
+        alpha = point_defects(dl,current_time)
+        defects_array += [alpha.defects['FP_count']]
+        print(alpha.defects['FP_count'])
+        
+        if alpha.defects['FP_count'] > max_FP:
+            max_FP = alpha.defects['FP_count']
+        
+        time_array += [current_time]
+        
+        current_time += interval
+    
+    
+    
+    # Definition of the maximum value for the y-axis of the graph
+    test = 1
+    while max_FP/test > 1:
+        test *= 10
+    sup_y = test
+    
+    test = 1
+    while t_end/test > 1:
+        test *= 10
+    sup_x = test
+    
+    test = 1
+    while interval/test < 1:
+        test = test/10
+    inf_x = test
+    
+    
+    
+    #Ploting of defects as a function of time
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.plot(time_array,defects_array)
+    ax.set_xscale('log')
+    ax.set_yscale('log')
+    ax.set_xlabel('Time [ps]')
+    ax.set_ylabel('Number of Frenkel pairs')
+    ax.set_title('Number of Frenkel pairs from '+str(t_start)+' ps to '+str(t_end)+' ps')
+    ax.set_xlim(inf_x,sup_x)
+    ax.set_ylim(1,sup_y)
+    
+    fig.savefig('plot_FPcount_'+str(t_start)+'ps_to_'+str(t_end)+'ps.png')
+    
+    plt.close(fig)
+
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+def T_infile(nb_cells, temp):
+    '''
+    This function aims to create a text file to initialise the electronic 
+    temperatures of the cells created using fix ttm in LAMMPS.
+    The user has to provide the number of cells in which he wants to divide
+    each side of the simulation cell. We advise to cut the simulation box in
+    cells such that each of them contains approximately 50 to 500 atoms depending
+    on the level of accuracy desired. This information must be provided using
+    the variable nb_cells.
+    The user also has to provide the temperature to initialise the cells with
+    using the variable temp.
+    The simulation box must be a cube
+    '''
+    
+    # Opening of the file
+    file = open('T'+str(temp)+'_Cell'+str(nb_cells)+'_infile.in','w')
+    
+    i=0
+    
+    
+    while i < nb_cells:
+        
+        j=0
+        while j < nb_cells:
+            
+            k=0
+            while k < nb_cells:
+                file.write(str(i)+' '+str(j)+' '+str(k)+' '+str(temp)+'\n')
+                
+                k+=1
+            
+            j+=1
+        
+        i+=1
     
     
     
